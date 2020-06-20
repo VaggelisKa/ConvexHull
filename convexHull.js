@@ -10,7 +10,7 @@
   let nextVertex;
 
   function setup() {
-    createCanvas(1000, 1000);
+    createCanvas(500, 500);
     let buffer = 20;
     for (let i = 0; i < 10; i++) {
       points.push(
@@ -24,9 +24,40 @@
     points.sort((a, b) => a.x - b.x)
     leftMost = points[0]
     currentVertex = leftMost;
-    nextVertex = points[1];
+    nextVertex = points[2];
     upperHull.push(points[0], points[1]);
     index = 2;
+
+    for (let i = 2; i < points.length; i++) {
+      upperHull.push(points[i])
+
+      let determinant = (
+        ((points[i-1].x - points[i-2].x) * (points[i].y - points[i-2].y)) - 
+        ((points[i-1].y - points[i-2].y) * (points[i].x - points[i-2].x))
+      )
+
+      while(upperHull.length > 2 && determinant > 0) {
+        upperHull.splice(upperHull.length - 1, 1);
+      }
+  }
+  lowerHull.push(points[points.length -1], points[points.length - 2])
+
+  for (let i = points.length - 3; i >= 0; i--) {
+    lowerHull.push(points[i])
+
+    let determinant = (
+      ((points[i+1].x - points[i+2].x) * (points[i].y - points[i+2].y)) - 
+      ((points[i+1].y - points[i+2].y) * (points[i].x - points[i+2].x))
+    )
+
+    while(lowerHull.length > 2 && determinant < 0) {
+      lowerHull.splice(lowerHull.length - 1, 1);
+    }
+  }
+
+  lowerHull.splice(0, 1);
+  lowerHull.splice(lowerHull.length, 1);
+  hull = [...upperHull, ...lowerHull]
   }
 
   function draw() {
@@ -39,53 +70,12 @@
       point(p.x, p.y)
     }
 
-    stroke(0, 255, 0);
-    strokeWeight(25)
-    point(leftMost.x, leftMost.y);
-
-    stroke(200, 0, 255);
-    strokeWeight(32)
-    point(currentVertex.x, currentVertex.y);
-
-    stroke(0, 255, 0);
-    strokeWeight(2);
-    line(currentVertex.x, currentVertex.y, nextVertex.x, nextVertex.y)
-
-
-    // implementing cross product //
-    for (let i = 3; i < points.length; i++) {
-      do {
-        console.log(i)
-        upperHull.push(points[i])
-        let checking = points[i];
-
-        stroke(255)
-        line(currentVertex.x, currentVertex.y, checking.x, checking.y)
-
-        const a = p5.Vector.sub(nextVertex, currentVertex);
-        const b = p5.Vector.sub(checking, currentVertex);
-        const cross = a.cross(b);
-        if (cross < 0) {
-          nextVertex = checking
-        }
-      }
-      while(upperHull.length > 2 && cross < 0) {
-        upperHull.splice(i-1, 1);
-      }
+    stroke(0, 0, 255);
+    fill(0, 0, 255, 50);
+    beginShape();
+    for (let p of hull) {
+      vertex(p.x, p.y);
     }
-    lowerHull.push(points[points.length], points[points.length - 1])
+    endShape(CLOSE);
 
-    for (let i = points.length - 2; i < 1; i--) {
-      lowerHull.push(points[i])
-      const c = p5.Vector.sub(nextVertex, currentVertex);
-      const d = p5.Vector.sub(points[i], currentVertex);
-      const cross = c.cross(d);
-      while(lowerHull.length < 2 && cross < 0) {
-        upperHull.splice(i-1, 1);
-      }
-    }
-
-    lowerHull.splice(0, 1);
-    lowerHull.splice(lowerHull.length - 1);
-    hull = [...upperHull, ...lowerHull]
   }
