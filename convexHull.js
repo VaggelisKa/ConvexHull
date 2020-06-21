@@ -3,12 +3,6 @@
   let lowerHull = [];
   let hull = [];
 
-
-  let leftMost;
-  let currentVertex;
-  let index;
-  let nextVertex;
-
   function setup() {
     createCanvas(500, 500);
     let buffer = 20;
@@ -22,11 +16,7 @@
     }
 
     points.sort((a, b) => a.x - b.x)
-    leftMost = points[0]
-    currentVertex = leftMost;
-    nextVertex = points[2];
     upperHull.push(points[0], points[1]);
-    index = 2;
 
     for (let i = 2; i < points.length; i++) {
       upperHull.push(points[i])
@@ -36,8 +26,8 @@
         ((points[i-1].y - points[i-2].y) * (points[i].x - points[i-2].x))
       )
 
-      while(upperHull.length > 2 && determinant > 0) {
-        upperHull.splice(upperHull.length - 1, 1);
+      while(upperHull.length > 2 && determinant >= 0) {
+        upperHull.splice(upperHull.length - 2, 1);
       }
   }
   lowerHull.push(points[points.length -1], points[points.length - 2])
@@ -50,14 +40,20 @@
       ((points[i+1].y - points[i+2].y) * (points[i].x - points[i+2].x))
     )
 
-    while(lowerHull.length > 2 && determinant < 0) {
-      lowerHull.splice(lowerHull.length - 1, 1);
+    console.log('before delete: ' + lowerHull.length);
+    console.log('det: ' + determinant)
+    while(lowerHull.length > 2 && determinant >= 0) {
+      lowerHull.splice(lowerHull.length - 2, 1);
+
+
     }
+    console.log('after delete: ' + lowerHull.length);
+    
   }
 
   lowerHull.splice(0, 1);
-  lowerHull.splice(lowerHull.length, 1);
-  hull = [...upperHull, ...lowerHull]
+  lowerHull.splice(lowerHull.length - 1, 1);
+  hull = [...upperHull, ...lowerHull];
   }
 
   function draw() {
@@ -72,6 +68,7 @@
 
     stroke(0, 0, 255);
     fill(0, 0, 255, 50);
+    strokeWeight(7)
     beginShape();
     for (let p of hull) {
       vertex(p.x, p.y);
