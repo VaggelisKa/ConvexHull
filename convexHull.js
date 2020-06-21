@@ -26,8 +26,12 @@
         ((points[i-1].y - points[i-2].y) * (points[i].x - points[i-2].x))
       )
 
-      while(upperHull.length > 2 && determinant >= 0) {
+      while(upperHull.length > 2 && determinant < 0) {
         upperHull.splice(upperHull.length - 2, 1);
+        // determinant = (
+        //   ((points[upperHull.length-2].x - points[upperHull.length-3].x) * (points[upperHull.length-1].y - points[upperHull.length-3].y)) - 
+        //   ((points[upperHull.length-2].y - points[upperHull.length-3].y) * (points[upperHull.length-1].x - points[upperHull.length-3].x))
+        // )
       }
   }
   lowerHull.push(points[points.length -1], points[points.length - 2])
@@ -42,10 +46,8 @@
 
     console.log('before delete: ' + lowerHull.length);
     console.log('det: ' + determinant)
-    while(lowerHull.length > 2 && determinant >= 0) {
+    while(lowerHull.length > 2 && determinant > 0) {
       lowerHull.splice(lowerHull.length - 2, 1);
-
-
     }
     console.log('after delete: ' + lowerHull.length);
     
