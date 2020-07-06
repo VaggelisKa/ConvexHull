@@ -44,7 +44,6 @@
       ((points[i+1].y - points[i+2].y) * (points[i].x - points[i+2].x))
     )
 
-  
     console.log('before delete: ' + lowerHull.length);
     console.log('det: ' + determinant)
     while(lowerHull.length > 2 && determinant > 0) {
