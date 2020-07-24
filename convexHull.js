@@ -48,9 +48,7 @@
     console.log('det: ' + determinant)
     while(lowerHull.length > 2 && determinant > 0) {
       lowerHull.splice(lowerHull.length - 2, 1);
-    }
-    
-    
+    }        
   }
 
   lowerHull.splice(0, 1);
